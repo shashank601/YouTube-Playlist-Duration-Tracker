@@ -23,10 +23,10 @@ app.use("/api", allRoutes);
 
 async function startServer() {
   try {
-    await pool.query("SELECT NOW()"); // test is it live
     app.listen(PORT, "0.0.0.0", () => {
       console.log("Server started...");
     });
+    
   } catch (error) {
     console.error("Server startup failed:", error);
     process.exit(1);
