@@ -6,7 +6,8 @@
   "scripts": {
     "migrate": "npx node-pg-migrate up",
     "down": "npx node-pg-migrate down",
-    "dev": "npm run migrate && nodemon server.js"
+    "dev": "npm run migrate && nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
