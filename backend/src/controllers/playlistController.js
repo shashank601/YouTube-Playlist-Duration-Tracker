@@ -111,28 +111,28 @@ export const getUserAllPlaylists = async (req, res) => {
 
     let durationForPlaylistId = {};
     for (const playlistId of Object.keys(playlistIdAndVideoIds)) {
-        const videoIds = playlistIdAndVideoIds[playlistId].join(",");
+      const videoIds = playlistIdAndVideoIds[playlistId].join(",");
 
-        const videoResponse = await axios.get(
-            "https://youtube.googleapis.com/youtube/v3/videos",
-            {
-                params: {
-                    part: "contentDetails",
-                    id: videoIds,
-                    key: api_key,
-                },
-            }
-        );
+      const videoResponse = await axios.get(
+        "https://youtube.googleapis.com/youtube/v3/videos",
+        {
+          params: {
+            part: "contentDetails",
+            id: videoIds,
+            key: api_key,
+          },
+        },
+      );
 
-        let sec = 0;
-        const items = videoResponse.data.items;
+      let sec = 0;
+      const items = videoResponse.data.items;
 
-        items.forEach(item => {
-            const duration = item.contentDetails.duration;
-            sec += durationToSeconds(duration);
-        });
+      items.forEach((item) => {
+        const duration = item.contentDetails.duration;
+        sec += durationToSeconds(duration);
+      });
 
-        durationForPlaylistId[playlistId] = sec;
+      durationForPlaylistId[playlistId] = sec;
     }
 
     if (playlists.length === 0) {
