@@ -1,0 +1,30 @@
+@import "tailwindcss"; 
+
+/*tailwind css doesnt support modifying html progress element so i am doing it gloabllu*/ 
+progress {
+  width: 100%;           /* full width */
+  height: 16px;          /* height of the bar */
+  appearance: none;      /* remove default OS style */
+  overflow: hidden;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  background-color: white; /* dark unfilled background */
+}
+
+/* WebKit (Chrome, Safari, Edge) */
+progress::-webkit-progress-bar {
+  background-color: black; /* dark background */
+}
+
+progress::-webkit-progress-value {
+  background-color: black; /* orange filled portion */
+  
+}
+
+/* Firefox */
+progress::-moz-progress-bar {
+  background-color: black; /* orange filled portion */
+}
+
+
