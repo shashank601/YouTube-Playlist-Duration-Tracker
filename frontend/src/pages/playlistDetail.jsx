@@ -38,7 +38,11 @@ export default function PlaylistDetail() {
   }, [playlistId]);
   
   if (loading) {
-    return <div>Loading</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-zinc-900"></div>
+      </div>
+    );
   } else {
     return(
       <div>

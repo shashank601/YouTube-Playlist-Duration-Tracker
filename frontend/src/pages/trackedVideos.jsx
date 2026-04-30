@@ -29,7 +29,11 @@ export default function TrackedVideos() {
 
   if (!data) {
     if (loading) {
-      return <h1>loading...</h1>;
+      return (
+        <div className="flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-zinc-900"></div>
+        </div>
+      );
     }
     return <h1>Something went wrong</h1>;
   }
@@ -49,16 +53,13 @@ export default function TrackedVideos() {
               <span className="text-gray-500">Total Watched: </span>
               {formatDuration(data.totalWatchedSeconds)}
             </h1>
-
           </div>
-            <h1 className="my-2 text-white bg-green-600 font-semibold rounded-sm px-2 py-1">
-              Progress:{" "}
-              <span className="text-black font-bold animate-pulse">
-                {`${Math.round((data.totalWatchedSeconds / data.totalSec) * 100)}%`}
-              </span>
-            </h1>
-
-
+          <h1 className="my-2 text-white bg-green-600 font-semibold rounded-sm px-2 py-1">
+            Progress:{" "}
+            <span className="text-black font-bold animate-pulse">
+              {`${Math.round((data.totalWatchedSeconds / data.totalSec) * 100)}%`}
+            </span>
+          </h1>
         </div>
       </div>
 
@@ -100,7 +101,6 @@ export default function TrackedVideos() {
     </>
   );
 }
-
 
 /*
 <h1 className="text-gray-500">

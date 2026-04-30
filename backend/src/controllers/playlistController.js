@@ -90,8 +90,8 @@ export const getUserAllPlaylists = async (req, res) => {
 
     let playlistIdAndVideoIds = {};
 
-    let items = [];
     for (const p of playlists) {
+      let items = [];
       let nextPageToken = "";
       playlistIdAndVideoIds[p.playlist_id] = [];
 
@@ -118,7 +118,7 @@ export const getUserAllPlaylists = async (req, res) => {
       });
     }
 
-    if (!items) return res.status(404).json({ error: "Playlist not found" });
+   
 
     let durationForPlaylistId = {};
 
@@ -127,9 +127,11 @@ export const getUserAllPlaylists = async (req, res) => {
       for (let i = 0; i < playlistIdAndVideoIds[playlistId].length; i += 50) {
         chunks.push(playlistIdAndVideoIds[playlistId].slice(i, i + 50));
       }
+
+
       let sec = 0;
       for (const chunk of chunks) {
-        const videoIds = chunk.join(",");
+        let videoIds = chunk.join(",");
 
         let videoResponse = await axios.get(
           "https://youtube.googleapis.com/youtube/v3/videos",
