@@ -14,10 +14,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
-});
-
 app.use("/api", allRoutes);
 
 

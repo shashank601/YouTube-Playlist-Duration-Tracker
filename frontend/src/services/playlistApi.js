@@ -4,6 +4,11 @@ import api from './axios.js'
 [{"playlist_id":"PLot-Xpze53letfIu9dMzIIO7na_sqvl0w","title":"HARD","watched_duration_seconds":"0","thumbnail":"https://i.ytimg.com/vi/q6IEA26hvXc/mqdefault.jpg"}]
 */
 
+export const healthCheck = () => {
+    return api.get(`/health`);
+};
+
+
 export const getUserPlaylists = () => {
     return api.get(`/playlists`);
 };
