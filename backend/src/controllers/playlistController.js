@@ -82,61 +82,74 @@ export const getUserAllPlaylists = async (req, res) => {
   try {
     const api_key = process.env.YT_API_KEY;
     const result = await pool.query(get_user_playlists_query, [userId]);
-    const playlists = result.rows; //{playlist_id, title, watched_duration_seconds}
+    const playlists = result.rows; //{playlist_id, title}
+
+    if (playlists.length === 0) {
+      return res.status(200).json([]);
+    }
 
     let playlistIdAndVideoIds = {};
 
+    let items = [];
     for (const p of playlists) {
-      const itemsResult = await axios.get(
-        "https://youtube.googleapis.com/youtube/v3/playlistItems",
-        {
-          params: {
-            part: "snippet",
-            playlistId: p.playlist_id,
-            maxResults: 50,
-            key: api_key,
-          },
-        },
-      );
-
-      const items = itemsResult.data.items;
-      if (!items) return res.status(404).json({ error: "Playlist not found" });
-
+      let nextPageToken = "";
       playlistIdAndVideoIds[p.playlist_id] = [];
+
+      do {
+        const itemsResult = await axios.get(
+          "https://youtube.googleapis.com/youtube/v3/playlistItems",
+          {
+            params: {
+              part: "snippet",
+              playlistId: p.playlist_id,
+              maxResults: 50,
+              key: api_key,
+              ...(nextPageToken && { pageToken: nextPageToken }),
+            },
+          },
+        );
+
+        items = [...items, ...itemsResult.data.items];
+        nextPageToken = itemsResult.data.nextPageToken || "";
+      } while (nextPageToken);
 
       items.forEach((i) => {
         playlistIdAndVideoIds[p.playlist_id].push(i.snippet.resourceId.videoId);
       });
     }
 
+    if (!items) return res.status(404).json({ error: "Playlist not found" });
+
     let durationForPlaylistId = {};
+
     for (const playlistId of Object.keys(playlistIdAndVideoIds)) {
-      const videoIds = playlistIdAndVideoIds[playlistId].join(",");
-
-      const videoResponse = await axios.get(
-        "https://youtube.googleapis.com/youtube/v3/videos",
-        {
-          params: {
-            part: "contentDetails",
-            id: videoIds,
-            key: api_key,
-          },
-        },
-      );
-
+      let chunks = [];
+      for (let i = 0; i < playlistIdAndVideoIds[playlistId].length; i += 50) {
+        chunks.push(playlistIdAndVideoIds[playlistId].slice(i, i + 50));
+      }
       let sec = 0;
-      const items = videoResponse.data.items;
+      for (const chunk of chunks) {
+        const videoIds = chunk.join(",");
 
-      items.forEach((item) => {
-        const duration = item.contentDetails.duration;
-        sec += durationToSeconds(duration);
-      });
+        let videoResponse = await axios.get(
+          "https://youtube.googleapis.com/youtube/v3/videos",
+          {
+            params: {
+              part: "contentDetails",
+              id: videoIds,
+              key: api_key,
+            },
+          },
+        );
 
+        const items = videoResponse.data.items;
+
+        items.forEach((item) => {
+          const duration = item.contentDetails.duration;
+          sec += durationToSeconds(duration);
+        });
+      }
       durationForPlaylistId[playlistId] = sec;
-    }
-
-    if (playlists.length === 0) {
-      return res.status(200).json([]);
     }
 
     const playlistIds = playlists.map((p) => p.playlist_id).join(",");
@@ -158,6 +171,10 @@ export const getUserAllPlaylists = async (req, res) => {
         -> add to the obj -> move to next playlist
         
         */
+
+
+    // note till now i have allowed /myprogress to fetch total durations per playlist (removed 50 cap) but another points is user can only track 50 videos at max, bcz i havent applied chunking on playlist id metadata retrieval so only first 50 playlists will be fetched if joined playlists id  length is less than 50 items
+    // the reasoen is it sound impractical to follow more than 50 playlist so it would be overkill     
 
     const ytItems = ytResponse.data.items; // see below
 
