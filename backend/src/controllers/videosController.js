@@ -35,25 +35,36 @@ export const getPlaylistVideosStatus = async (req, res) => {
       [user_id, playlist_id],
     );
 
-    // videoIds string
-    const itemsResult = await axios.get(
-      "https://youtube.googleapis.com/youtube/v3/playlistItems",
-      {
-        params: {
-          part: "snippet",
-          playlistId: playlist_id,
-          maxResults: 50,
-          key: api_key,
+    let nextPageToken = "";
+    let items = [];
+    do {
+      // videoIds string
+      let response = await axios.get(
+        "https://youtube.googleapis.com/youtube/v3/playlistItems",
+        {
+          params: {
+            part: "snippet",
+            playlistId: playlist_id,
+            maxResults: 50,
+            key: api_key,
+            ...(nextPageToken && { pageToken: nextPageToken }),
+          },
         },
-      },
-    );
 
-    const items = itemsResult.data.items;
+      );
 
-    if (!items) return res.status(404).json({ error: "Playlist not found" });
+      items.push(...response.data.items);
+
+      nextPageToken = response.data.nextPageToken || "";
+
+    } while (nextPageToken)
+
+
+    if (!items.length) return res.status(404).json({ error: "Playlist not found" });
+
+
 
     let playlistItems = {};
-
     let videoIds = [];
 
     // we are doing two tasks here
@@ -67,7 +78,6 @@ export const getPlaylistVideosStatus = async (req, res) => {
 
       // collect video ids
       videoIds.push(vId);
-
       // collect video details
       playlistItems[vId] = {
         title: item?.snippet?.title ?? null,
@@ -76,38 +86,54 @@ export const getPlaylistVideosStatus = async (req, res) => {
       };
     });
 
+
     if (videoIds.length === 0) {
       return res
         .status(200)
         .json({ videos: [], totalSec: 0, totalWatchedSeconds: 0 });
     }
 
-    const videoIdsString = videoIds.join(",");
 
-    // calling for durations of videos
-    const videoResponse = await axios.get(
-      "https://youtube.googleapis.com/youtube/v3/videos",
-      {
-        params: {
-          part: "contentDetails",
-          id: videoIdsString,
-          key: api_key,
-        },
-      },
-    );
-    // data.items.contentdetails.durations
 
-    const videoItems = videoResponse.data.items;
+    let chunks = []
+    for (let i = 0; i < videoIds.length; i += 50) {
+      chunks.push(videoIds.slice(i, i + 50));
+    }
 
     let totalSec = 0;
     let totalWatchedSeconds = 0;
 
+    
+    let videoItems = [];
+    for (let chunk of chunks) {
+      const videoIdsString = chunk.join(",");
+   
+      // calling for durations of videos
+      const videoResponse = await axios.get(
+        "https://youtube.googleapis.com/youtube/v3/videos",
+        {
+          params: {
+            part: "contentDetails",
+            id: chunk.join(","),
+            key: api_key,
+          },
+        },
+      );
+      
+
+      // data.items.contentdetails.durations
+      videoItems.push(...videoResponse.data.items);
+      //[add code here]
+    }
+
+
     // for O(1) lookup
     const isWatchedMap = {};
-
     dbResult.rows.forEach((row) => {
       isWatchedMap[row.video_id] = row.is_watched;
     });
+
+    
 
     (videoItems || []).forEach((item) => {
       const duration = item?.contentDetails?.duration;
@@ -184,6 +210,15 @@ export const getPlaylistVideosStatus = async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch playlist videos" });
   }
 };
+
+
+
+
+
+
+
+
+
 
 export const markAsWatched = async (req, res) => {
   const playlist_id = req.params.playlistId;
