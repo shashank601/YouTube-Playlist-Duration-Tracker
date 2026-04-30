@@ -1,4 +1,3 @@
-
 export const up = (pgm) => {
   pgm.sql(`
     CREATE TABLE IF NOT EXISTS users (

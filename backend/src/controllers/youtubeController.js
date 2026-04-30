@@ -34,7 +34,7 @@ export const get_playlist = async (req, res) => {
     let items = [];
     let sec = 0;
 
-    let result = []
+    let result = [];
 
     do {
       const playlistResponse = await axios.get(
@@ -99,7 +99,7 @@ export const get_playlist = async (req, res) => {
 
       result = [
         ...result,
-        ...playlistResponse.data.items?.map((item) => {
+        ...(playlistResponse.data.items?.map((item) => {
           const videoId = item.snippet?.resourceId?.videoId;
 
           return {
@@ -109,7 +109,7 @@ export const get_playlist = async (req, res) => {
             videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
             duration: durationMap?.[videoId] || null,
           };
-        }) || [],
+        }) || []),
       ];
 
       // writing  logic for total seconds

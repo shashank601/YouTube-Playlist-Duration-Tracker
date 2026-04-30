@@ -50,19 +50,15 @@ export const getPlaylistVideosStatus = async (req, res) => {
             ...(nextPageToken && { pageToken: nextPageToken }),
           },
         },
-
       );
 
       items.push(...response.data.items);
 
       nextPageToken = response.data.nextPageToken || "";
+    } while (nextPageToken);
 
-    } while (nextPageToken)
-
-
-    if (!items.length) return res.status(404).json({ error: "Playlist not found" });
-
-
+    if (!items.length)
+      return res.status(404).json({ error: "Playlist not found" });
 
     let playlistItems = {};
     let videoIds = [];
@@ -86,16 +82,13 @@ export const getPlaylistVideosStatus = async (req, res) => {
       };
     });
 
-
     if (videoIds.length === 0) {
       return res
         .status(200)
         .json({ videos: [], totalSec: 0, totalWatchedSeconds: 0 });
     }
 
-
-
-    let chunks = []
+    let chunks = [];
     for (let i = 0; i < videoIds.length; i += 50) {
       chunks.push(videoIds.slice(i, i + 50));
     }
@@ -103,11 +96,10 @@ export const getPlaylistVideosStatus = async (req, res) => {
     let totalSec = 0;
     let totalWatchedSeconds = 0;
 
-    
     let videoItems = [];
     for (let chunk of chunks) {
       const videoIdsString = chunk.join(",");
-   
+
       // calling for durations of videos
       const videoResponse = await axios.get(
         "https://youtube.googleapis.com/youtube/v3/videos",
@@ -119,21 +111,17 @@ export const getPlaylistVideosStatus = async (req, res) => {
           },
         },
       );
-      
 
       // data.items.contentdetails.durations
       videoItems.push(...videoResponse.data.items);
       //[add code here]
     }
 
-
     // for O(1) lookup
     const isWatchedMap = {};
     dbResult.rows.forEach((row) => {
       isWatchedMap[row.video_id] = row.is_watched;
     });
-
-    
 
     (videoItems || []).forEach((item) => {
       const duration = item?.contentDetails?.duration;
@@ -210,15 +198,6 @@ export const getPlaylistVideosStatus = async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch playlist videos" });
   }
 };
-
-
-
-
-
-
-
-
-
 
 export const markAsWatched = async (req, res) => {
   const playlist_id = req.params.playlistId;

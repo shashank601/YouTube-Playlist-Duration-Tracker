@@ -172,9 +172,8 @@ export const getUserAllPlaylists = async (req, res) => {
         
         */
 
-
     // note till now i have allowed /myprogress to fetch total durations per playlist (removed 50 cap) but another points is user can only track 50 videos at max, bcz i havent applied chunking on playlist id metadata retrieval so only first 50 playlists will be fetched if joined playlists id  length is less than 50 items
-    // the reasoen is it sound impractical to follow more than 50 playlist so it would be overkill     
+    // the reasoen is it sound impractical to follow more than 50 playlist so it would be overkill
 
     const ytItems = ytResponse.data.items; // see below
 
