@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS accounts (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS playlists (
     playlist_id VARCHAR(255) NOT NULL,
     title VARCHAR(255) NOT NULL,
     UNIQUE(user_id, playlist_id),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE
 );
 
 
