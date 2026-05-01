@@ -4,14 +4,14 @@
 
 // route level
 export const register = `
-INSERT INTO users (username, email, hashed_pwd)
+INSERT INTO accounts (username, email, hashed_pwd)
 VALUES ($1, $2, $3) 
 RETURNING username, email;`;
 
 // route level
 export const login = `
     SELECT id, username, hashed_pwd
-    FROM users
+    FROM accounts
     WHERE email = $1;
 `;
 
