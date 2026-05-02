@@ -13,11 +13,77 @@
 
 Track your progress through YouTube playlists with duration-based progress tracking. Mark videos as watched, see total vs watched duration, and manage multiple playlists in one place.
 
-## Screenshots
 
-<!-- Add screenshots here -->
-![App Screenshot](./docs/screenshots/dashboard.png)
-![Playlist Detail](./docs/screenshots/playlist-detail.png)
+---
+## Product Walkthrough
+
+### Authentication Screens
+#### Green dot indicates backend health status: active (reachable)
+<table>
+  <tr>
+    <td><img width="500" alt="Screenshot 2026-05-02 145006" src="https://github.com/user-attachments/assets/1a75b57b-8063-463a-9253-4f5188a9303f" /></td>
+    <td><img width="500" alt="Screenshot 2026-05-02 144018" src="https://github.com/user-attachments/assets/4d96afe1-d435-4af1-bfa7-ed7aad9fdd6c" /></td>
+  </tr>  
+</table>
+
+
+### Home and Dashboard screen
+
+<table>
+  <tr>
+    <td><img width="500" alt="Screenshot 2026-05-02 144039" src="https://github.com/user-attachments/assets/cef95c06-323c-4da8-b350-c790d3242b5d" /></td>
+    <td><img width="500" alt="Screenshot 2026-05-02 144621" src="https://github.com/user-attachments/assets/e895d5ca-2f8c-408b-9398-1ff5623011cd" /></td>
+  </tr>
+</table>
+<table>
+  
+  #### Search and Track Screen
+  <tr>
+    <td><img width="500" alt="Screenshot 2026-05-02 144559" src="https://github.com/user-attachments/assets/b37905a3-9862-4040-92b6-13328693ad87" /></td>
+    <td><img width="500" alt="Screenshot 2026-05-02 144852" src="https://github.com/user-attachments/assets/12319d47-c6c2-442e-8578-7e9b403e7d0e" />
+    </td>
+  </tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Item Marking Interface
+
+<img width="500" alt="Screenshot 2026-05-02 144948" src="https://github.com/user-attachments/assets/bd4e1710-c5b7-43ba-b259-8543f67b2132" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
 
 ## Tech Stack
 
